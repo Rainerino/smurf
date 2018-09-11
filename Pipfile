@@ -1,0 +1,53 @@
+[[source]]
+url = "https://pypi.org/simple"
+name = "pypi"
+verify_ssl = true
+
+[requires]
+python_version = "3.6"
+
+[dev-packages]
+bandit = "*"
+coverage = "*"
+django-debug-toolbar = "*"
+django-debug-toolbar-request-history = "*"
+django-naomi = "*"
+isort = "*"
+model-mommy = "*"
+pre-commit = "*"
+prospector = {extras = ["with-vulture"]}
+pylint = "*"
+pylint-celery = "*"
+safety = "*"
+pylint-django = "*"
+
+[packages]
+django = "*"
+celery = {extras = ["redis"]}
+django-model-utils = "*"
+django-webpack-loader = "*"
+django-js-reverse = "*"
+django-import-export = "*"
+python-decouple = "*"
+psycopg2 = "*"
+brotlipy = "*"
+django-log-request-id = "*"
+dj-database-url = "*"
+gunicorn = "*"
+whitenoise = "*"
+psutil = "*"
+ipython = "*"
+djangorestframework = "*"
+dronekit = "*"
+dronekit-sitl = "*"
+psycopg2-binary = "*"
+django-extensions = "*"
+django-background-tasks = "*"
+django-nose = "*"
+geopy = "*"
+preconditions = "*"
+#pymavlink = "*"
+piexif = "*"
+pillow = "*"
+exifread = "*"
+pyserial = "*"

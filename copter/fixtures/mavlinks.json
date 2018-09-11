@@ -1,0 +1,157 @@
+[
+    {
+        "model": "copter.MavlinkConnect",
+        "pk": 1,
+        "fields": {
+            "connected": false,
+            "connection_baud_rate" : 115200,
+            "attempt_connect": false,
+            "connection_port": "tcp:127.0.0.1:5760",
+            "connection_status_message": "Not connected"
+        }
+    },
+    {
+        "model": "copter.MavlinkData",
+        "pk": 1,
+        "fields": {
+            "firmware_version": "Newest",
+            "longitude": 0,
+            "latitude": 0,
+            "altitude": 0,
+            "velocity": "unknow",
+            "gps": "where are you",
+            "groundspeed": "slower",
+            "airspeed": "faster",
+            "ekf_ok": "always buged",
+            "battery": "more than enough",
+            "last_heartbeat": "still there?",
+            "heading": "NWSE",
+            "mode": "Not in mood",
+            "armed": "always",
+            "system_status": "OMGGGG!",
+            "home_location_lat": 0,
+            "home_location_lon": 0,
+            "home_location_alt_abs": 0
+        }
+    },
+    {
+        "model": "copter.MavlinkEngine",
+        "pk": 1,
+        "fields": {
+            "engine_running": false,
+            "engine_attempt_running": false,
+            "engine_terminate": false,
+            "engine_status_message": "Default"
+        }
+    },
+    {
+        "model": "copter.GpsPosition",
+        "pk": 1,
+        "fields": {
+            "latitude": 49.258492587512116,
+            "longitude": -123.24134025989838
+        }
+    },
+    {
+        "model": "copter.GpsPosition",
+        "pk": 2,
+        "fields": {
+            "latitude": 49.25898962354094,
+            "longitude": -123.23981384176682
+        }
+    },
+    {
+        "model": "copter.GpsPosition",
+        "pk": 3,
+        "fields": {
+            "latitude": 49.25970336549847,
+            "longitude": -123.24038341003217
+        }
+    },
+    {
+        "model": "copter.GpsPosition",
+        "pk": 4,
+        "fields": {
+            "latitude": 1213.21,
+            "longitude": 113.12
+        }
+    },
+    {
+        "model": "copter.MavlinkMission",
+        "pk": 1,
+        "fields": {
+            "is_mission_running": false,
+            "is_attempt_mission": false,
+            "waypoint_list": [
+                1,
+                2,
+                3
+            ],
+            "mission_status_message": ""
+        }
+    },
+    {
+        "model": "copter.AerialPosition",
+        "pk": 1,
+        "fields": {
+            "gps_position": 1,
+            "relative_altitude": 20
+        }
+    },
+    {
+        "model": "copter.AerialPosition",
+        "pk": 2,
+        "fields": {
+            "gps_position": 2,
+            "relative_altitude": 30
+        }
+    },
+    {
+        "model": "copter.AerialPosition",
+        "pk": 3,
+        "fields": {
+            "gps_position": 3,
+            "relative_altitude": 20
+        }
+    },
+    {
+        "model": "copter.Waypoint",
+        "pk": 1,
+        "fields": {
+            "aerial_position": 1,
+            "order": 1,
+            "accomplished": false
+        }
+    },
+    {
+        "model": "copter.Waypoint",
+        "pk": 2,
+        "fields": {
+            "aerial_position": 2,
+            "order": 2,
+            "accomplished": false
+        }
+    },
+    {
+        "model": "copter.Waypoint",
+        "pk": 3,
+        "fields": {
+            "aerial_position": 3,
+            "order": 3,
+            "accomplished": false
+        }
+    },
+    {
+        "model": "copter.MavlinkGoto",
+        "pk": 1,
+        "fields": {
+            "guided_waypoint_list": [
+            ],
+            "guided_waypoint_confirmed": false,
+            "guided_waypoint_message": "System Idle",
+            "guided_waypoint_longitude": 0,
+            "guided_waypoint_latitude": 0,
+            "guided_waypoint_altitude": 0
+        }
+    }
+]
