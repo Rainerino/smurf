@@ -1,0 +1,42 @@
+services:
+  - postgres:latest
+
+variables:
+  POSTGRES_DB: remote
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache"
+  LC_ALL: 'C.UTF-8'
+  LANG: 'C.UTF-8'
+  DEBIAN_FRONTEND: 'noninteractive'
+  PIPENV_VENV_IN_PROJECT: 'true'
+  GIT_STRATEGY: fetch
+  GIT_SUBMODULE_STRATEGY: recursive
+
+Prep:
+  image: kennethreitz/pipenv
+  stage: build
+  script:
+    - apt update -qq
+    - apt install sudo -y -qq
+    - ./tools/setup.sh
+  artifacts:
+    untracked: true
+    expire_in: 3 days
+    paths:
+    - .cache/
+
+Test Backend:
+  image: kennethreitz/pipenv
+  stage: test
+  variables:
+    DATABASE_URL: "postgresql://postgres:postgres@postgres:5432/$POSTGRES_DB"
+  script:
+  - apt update -qq
+  - apt install sudo -y -qq
+  - apt install -y -qq postgresql postgresql-client libpq-dev
+  - service postgresql start
+  - ./tools/setup_db.sh
+
+  artifacts:
+    paths:
+    - .cache/
+
