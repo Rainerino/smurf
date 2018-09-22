@@ -37,8 +37,6 @@ sudo -u "${USER}" git submodule update --init --recursive
 echo "Submodules updated"
 
 # Start postgres and check user/database
-sudo
-
 service postgresql start
 
 "${CWD}"/tools/setup_db.sh
