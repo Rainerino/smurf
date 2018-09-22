@@ -17,7 +17,7 @@ Prep:
   script:
     - apt update -qq
     - apt install sudo -y -qq
-    - ./tools/setup.sh
+    - ./tools/setup-ci.sh
   artifacts:
     untracked: true
     expire_in: 3 days
