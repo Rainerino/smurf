@@ -33,8 +33,18 @@ fi
 # Get root directory of project
 CWD="$(cd "$(dirname "${BASH_SOURCE[0]}")" > /dev/null && cd .. && pwd)"
 
-sudo -u "${USER}" git submodule update --init --recursive
+echo "Checking submodules..."
+cd "${CWD}"
+
+git submodule update --init --recursive
 echo "Submodules updated"
+
+
+
+# Install dependences
+echo "Checking Python dependencies..."
+pipenv install --dev --skip-lock
+pipenv install --skip-lock
 
 # Start postgres and check user/database
 service postgresql start

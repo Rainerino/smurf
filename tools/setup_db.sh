@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 apt install python-dev libpq-dev postgresql postgresql-contrib -y
 
