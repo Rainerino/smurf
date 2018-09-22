@@ -2,12 +2,12 @@
 import dronekit_sitl
 from django.test import TestCase
 
-from mavlink.models.connection import MavlinkConnect
-from mavlink.models.models import *
-from mavlink.models.guided_waypoint import MavlinkGoTo
-from mavlink.models.mission import MavlinkMission
-from mavlink.models.aerial_position import AerialPosition
-from mavlink.models.gps_position import GpsPosition
+from copter.models.connection import MavlinkConnect
+from copter.models.models import *
+from copter.models.guided_waypoint import MavlinkGoTo
+from copter.models.mission import MavlinkMission
+from copter.models.aerial_position import AerialPosition
+from copter.models.gps_position import GpsPosition
 
 from django.core.management import call_command
 

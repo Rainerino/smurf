@@ -5,7 +5,7 @@ from django.test import TestCase
 import psycopg2
 
 import scripts.mavlink_db.dbaccess as func
-from mavlink.models.connection import MavlinkConnect
+from copter.models.connection import MavlinkConnect
 
 
 class TestDBAccess(TestCase):

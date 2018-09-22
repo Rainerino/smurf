@@ -8,7 +8,7 @@ from django.db import DatabaseError
 
 import dronekit
 
-from mavlink.models.models import *
+from copter.models.models import *
 from scripts.drone.copter import Copter
 from scripts.mavlink_db.dbaccess import connect_to_gcomv2, refresh_database
 from scripts.drone.message import Messages
