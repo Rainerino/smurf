@@ -29,13 +29,8 @@ if [ ! -x "$(command -v pipenv)" ]; then
     pip3 install pipenv
     echo "Pipenv installed"
 fi
-if [ ! -x "$(command -v npm)" ]; then
-    echo "npm not installed. Installing..."
-    apt install curl software-properties-common -qq -y
-    curl -sL https://deb.nodesource.com/setup_8.x | bash -
-    apt install nodejs -qq -y
-    echo "Nodejs installed"
-fi
+
+
 apt install python-dev libpq-dev postgresql postgresql-contrib -qq -y
 
 # Get root directory of project
