@@ -35,7 +35,8 @@ Test Backend:
   - apt install -y -qq postgresql postgresql-client libpq-dev
   - service postgresql start
   - ./tools/setup_db.sh
-
+  - pipenv run coverage run --source='.' manage.py test copter --keepdb
+#  - pipenv run coverage run --source='./scripts' manage.py test imp_module --keepdb
   artifacts:
     paths:
     - .cache/

@@ -1,4 +1,5 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
 
 # Make sure script is run as root
 if [ "${EUID}" -ne 0 ]; then
@@ -38,8 +39,9 @@ echo "Submodules updated"
 # Start postgres and check user/database
 sudo
 
-"${CWD}"/tools/setup_db.sh
 service postgresql start
+
+"${CWD}"/tools/setup_db.sh
 
 echo "Checking migrations..."
 yes | sudo -u "${USER}" pipenv run python ../manage.py makemigrations

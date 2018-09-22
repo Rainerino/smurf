@@ -55,12 +55,7 @@ if [ ! -f "${SETTINGS_FILE}" ]; then
     cp "${SETTINGS_FILE}".example "${SETTINGS_FILE}"
     echo "Created "${SETTINGS_FILE}""
 fi
-ENV_FILE="${CWD}"/.env
-if [ ! -f "${ENV_FILE}" ]; then
-    echo "Creating env file..."
-    cp "${ENV_FILE}".example "${ENV_FILE}"
-    echo "Created "${ENV_FILE}""
-fi
+
 
 # Install dependences
 echo "Checking Python dependencies..."
