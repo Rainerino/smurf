@@ -65,7 +65,6 @@ if ! sudo -u postgres psql -t -c '\du' | cut -d \| -f 1 | grep -qw drone; then
 fi
 
 
-
 echo "Checking migrations..."
 yes | sudo -u "${USER}" pipenv run python ../manage.py makemigrations
 sudo -u "${USER}" pipenv run python ../manage.py migrate

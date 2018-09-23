@@ -78,7 +78,7 @@ def run():
             # ==================== Pre mission checks
 
             """At this point, drone is ready to do any operations"""
-            data_thread = connected_drone.data_thread()
+            data_thread = connected_drone.mission_data_thread_create()
 
             data_thread.start()
 

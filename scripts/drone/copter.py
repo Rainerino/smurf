@@ -246,7 +246,7 @@ class Copter:
 
             raise CopterConnectionInterruptError
 
-    def data_thread(self):
+    def mission_data_thread_create(self):
         """
         :return: the data reading thread object
         """
