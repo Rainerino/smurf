@@ -2,8 +2,8 @@ from django.db import models
 
 
 class MavlinkConnect(models.Model):
-    """
-
+    """ Connection data for connecting to copter
+        TODO:
     """
     connected = models.BooleanField(default=False)
 
@@ -18,3 +18,4 @@ class MavlinkConnect(models.Model):
     def __str__(self):
         return "Attempt: %s Connected %s, port: %s baud: %s " % \
                (self.attempt_connect, self.connected, self.connection_port, self.connection_baud_rate)
+    

@@ -69,7 +69,7 @@ def run():
             connected_drone = Copter()
 
             # raise exceptions here
-            connected_drone.connect_to_drone()
+            connected_drone.action_connect()
 
             connected_drone.arm_check()
 

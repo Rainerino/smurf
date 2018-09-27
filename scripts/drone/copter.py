@@ -27,6 +27,9 @@ class Copter:
         self.vehicle = None
         self.current_waypoint = None
         self.mission_not_init = True
+        self.vehicle_is_armed = False
+        self.vehicle_is_connected = False
+        self.vehicle_is_connecting = False
 
     def received_connect_signal(self):
         """Attempting connect to the drone with current connection configurations
@@ -112,25 +115,26 @@ class Copter:
             if settings.ENGINE_DEBUG:
                 print("Connected to %s with %s" % (connection_port, baud_rate))
 
-    def connect_to_drone(self):
-        """
+    def action_connect(self):
+        """ precondition: database is initialized
         :return:
         """
         while not MavlinkConnect.objects.get(pk=1).connected:
 
             # if the connect button is clicked
             if MavlinkConnect.objects.get(pk=1).attempt_connect:
-
+                self.vehicle_is_connecting = True
                 self.received_connect_signal()
 
             else:
                 # Not attempting connecting, means the connect button is not clicked
-
                 m = MavlinkConnect.objects.get(pk=1)
                 m.connection_status_message = Messages.INITIALIZATION
                 m.save()
-                time.sleep(2)
+                time.sleep()
                 print("Not connecting")
+
+
 
     def home_location_check(self):
         """
@@ -514,3 +518,6 @@ class Copter:
         Apps could monitor Vehicle.system_status for CRITICAL or EMERGENCY in order to implement 
             specific emergency handling.
         """
+
+
+

@@ -6,11 +6,14 @@ from rest_framework.response import Response
 
 from copter.serializers.serializers import *
 
+from copter.Copter import drone
 
 class MavlinkConnectListCreate(generics.RetrieveUpdateDestroyAPIView):
     queryset = MavlinkConnect.objects.all()
     serializer_class = MavlinkConnectionSerializer
 
+    def get(self, request, *args, **kwargs):
+        pass
 
 class MavlinkArmListCreate(generics.RetrieveUpdateDestroyAPIView):
     queryset = MavlinkArm.objects.all()
