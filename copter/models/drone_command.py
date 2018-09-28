@@ -17,6 +17,10 @@ class DroneCommand(models.Model):
 	connection_baud_rate = models.IntegerField(default=115200)
 
 	# current_mission = mission blah
+	def __str__(self):
+		pass
+
+
 	@preconditions(lambda self : self.is_attempt_connect)
 	def connect_to_vehicle(self):
 		"""This function will connect to a physical drone"""
