@@ -9,6 +9,7 @@ class DroneCommand(models.Model):
 	"""
 
 	is_attempt_connect = models.BooleanField(default=False)
+	is_attempt_disconnect = models.BooleanField(default=False)
 	is_attempt_arm = models.BooleanField(default=False)
 	is_attempt_disarm = models.BooleanField(default=False)
 
@@ -16,7 +17,7 @@ class DroneCommand(models.Model):
 	connection_baud_rate = models.IntegerField(default=115200)
 
 	# current_mission = mission blah
-	@preconditions(lambda is_attempt_connect: DroneCommand.objects.get(pk=1).is_attempt_connect)
+	@preconditions(lambda self : self.is_attempt_connect)
 	def connect_to_vehicle(self):
 		"""This function will connect to a physical drone"""
 		pass

@@ -81,6 +81,7 @@
       "is_attempt_connect": false,
       "is_attempt_arm": false,
       "is_attempt_disarm": false,
+      "is_attempt_disconnect" : false,
       "connection_port": "tcp:127.0.0.1:5760",
       "connection_baud_rate": 115200
     }

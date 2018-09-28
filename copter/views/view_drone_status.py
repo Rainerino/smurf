@@ -3,8 +3,7 @@ from rest_framework import generics
 from copter.models.drone_status import DroneStatus
 
 
-class DroneStatusListCreate(generics.RetrieveUpdateDestroyAPIView):
+class DroneStatusListCreate(generics.RetrieveAPIView):
 	queryset = DroneStatus.objects.all()
 	serializer_class = DroneStatusSerializer
-
 

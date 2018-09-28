@@ -1,9 +1,9 @@
 from django.conf.urls import url
 
-from copter.views.drone_status import DroneStatusListCreate
-from copter.views.command_mode import DroneCommandListCreate
-from copter.views.guided_mode import GuidedWaypointListCreate
-from copter.views.mission_mode import FlightMissionListCreate
+from copter.views.view_drone_status import DroneStatusListCreate
+from copter.views.view_command_mode import DroneCommandListCreate
+from copter.views.view_guided_mode import GuidedWaypointListCreate
+from copter.views.view_mission_mode import FlightMissionListCreate
 
 urlpatterns = [
 
