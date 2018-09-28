@@ -1,4 +1,6 @@
 from django.db import models
+from preconditions import preconditions
+
 
 class DroneCommand(models.Model):
 	"""
@@ -14,4 +16,19 @@ class DroneCommand(models.Model):
 	connection_baud_rate = models.IntegerField(default=115200)
 
 	# current_mission = mission blah
+	@preconditions(lambda is_attempt_connect: DroneCommand.objects.get(pk=1).is_attempt_connect)
+	def connect_to_vehicle(self):
+		"""This function will connect to a physical drone"""
+		pass
 
+	def arm_vehicle(self):
+		""""Arm vehicle function"""
+		pass
+
+	def disarm_vehicle(self):
+		""""Disarm vehivle function"""
+		pass
+
+	def disconnect_from_vehicle(self):
+		"""This function will disconnect from a connected vehicle"""
+		pass

@@ -25,4 +25,4 @@ class FlightMission(models.Model):
                                               self.mission_status_message)
 
 
-
+    # TODO finish this in the end after finsihn guided mode and actions

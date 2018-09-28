@@ -2,6 +2,7 @@ from django.db import models
 from copter.models.aerial_position import AerialPosition
 from dronekit import Vehicle
 
+
 class DroneStatus(models.Model):
 	"""
 	These are the states of the copter, read only
@@ -17,7 +18,6 @@ class DroneStatus(models.Model):
 	"""
 	Read only telemetry data
 	"""
-	firmware_version = models.TextField(default="")
 
 	current_location = models.ForeignKey(AerialPosition, on_delete=models.CASCADE, related_name="current_location")
 
@@ -36,12 +36,29 @@ class DroneStatus(models.Model):
 	armed = models.TextField(default="")
 	system_status = models.TextField(default="")
 
-	# home_location_lon = models.DecimalField(default=0, max_digits=11, decimal_places=8)
-	# home_location_lat = models.DecimalField(default=0, max_digits=11, decimal_places=8)
-	# home_location_alt_abs = models.DecimalField(default=0, max_digits=7, decimal_places=4)
-
-	# longitude = models.DecimalField(default=0, max_digits=11, decimal_places=8)
-	# latitude = models.DecimalField(default=0, max_digits=11, decimal_places=8)
-	# altitude = models.DecimalField(default=0, max_digits=7, decimal_places=4)
-
+	# this is a unique dronekit object
 	vehicle = Vehicle
+
+	def __str__(self):
+		pass
+
+	def refresh_status(self, new_data_dict):
+		"""Refresh all the status data """
+		pass
+
+	def get_vehicle(self):
+		"""Return the dronekit.vehicle object, which is frequently used"""
+		# check if the vehicle is valid
+		if self.check_connection():
+			return DroneStatus.objects.get(pk=1).vehicle
+		else:
+			return None
+
+	def check_connection(self):
+		"""This function will check if the drone is connected to the physical vehicle or not"""
+		pass
+
+
+
+
+

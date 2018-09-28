@@ -95,7 +95,6 @@
       "is_connecting": false,
       "arm_status_message": "Arm Testing",
       "connection_status_message": " Connection Testing",
-      "firmware_version": "Newest",
       "velocity": "unknow",
       "gps": "where are you",
       "groundspeed": "slower",
