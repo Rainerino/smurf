@@ -2,10 +2,8 @@ from django.core.management import call_command
 from django.db import DatabaseError
 from django.test import TestCase
 
-import psycopg2
-
 import scripts.mavlink_db.dbaccess as func
-from copter.models.connection import MavlinkConnect
+from copter.models.legacy.connection import MavlinkConnect
 
 
 class TestDBAccess(TestCase):

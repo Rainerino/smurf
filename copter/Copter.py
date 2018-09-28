@@ -3,6 +3,4 @@ class Copter:
 		self.vehicle = None
 
 
-drone =  Copter()
-
-
+drone = Copter()

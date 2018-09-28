@@ -3,7 +3,7 @@ from django.db import models
 from copter.models.waypoint import Waypoint
 
 
-class MavlinkMission(models.Model):
+class FlightMission(models.Model):
     """ Mission that consist of the state of the current mission, the waypoint list that
     It will execute
 

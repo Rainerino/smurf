@@ -1,14 +1,10 @@
-# coding=utf-8
 from django.db import models
 
-from copter.models.waypoint import Waypoint
+from copter.models.aerial_position import AerialPosition
 
 
-class MavlinkGoTo(models.Model):
-    """"""
-    guided_waypoint_longitude = models.FloatField(default=0)
-    guided_waypoint_latitude = models.FloatField(default=0)
-    guided_waypoint_altitude = models.FloatField(default=0)
-    guided_waypoint_list = models.ManyToManyField(Waypoint, related_name="guided_list")
-    guided_waypoint_confirmed = models.BooleanField(default=False)
-    guided_waypoint_message = models.TextField(default="System Idle")
+class GuidedWaypoint(models.Model):
+	is_guided_running = models.BooleanField(default=False)
+	is_attempt_guided = models.BooleanField(default=False)
+	current_guided_waypoint = models.ForeignKey(AerialPosition, on_delete=models.CASCADE,related_name="guided_waypoint")
+	guided_status_message = models.TextField(default="No message")

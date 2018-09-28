@@ -1,17 +1,12 @@
 # coding=utf-8
-import socket
 import threading
 import time
 import traceback
 
-from django.db.models import QuerySet
-from preconditions import preconditions
-
-from copter.models.connection import MavlinkConnect
-from copter.models.guided_waypoint import MavlinkGoTo
-from copter.models.mission import MavlinkMission
-from copter.models.models import *
-from copter.models.waypoint import Waypoint
+from copter.models.legacy.connection import MavlinkConnect
+from copter.models.legacy.guided_waypoint import MavlinkGoTo
+from copter.models.flight_mission import MavlinkMission
+from copter.models.legacy.models import *
 from scripts.drone.copter_error import *
 from scripts.drone.message import Messages
 from scripts.mavlink_db.dbaccess import refresh_database, update_mavlink_mavlinkdata

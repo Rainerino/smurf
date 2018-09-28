@@ -1,18 +1,11 @@
 # coding=utf-8
-import dronekit_sitl
 from django.test import TestCase
 
-from copter.models.connection import MavlinkConnect
-from copter.models.models import *
-from copter.models.guided_waypoint import MavlinkGoTo
-from copter.models.mission import MavlinkMission
-from copter.models.aerial_position import AerialPosition
-from copter.models.gps_position import GpsPosition
+from copter.models.legacy.connection import MavlinkConnect
 
 from django.core.management import call_command
 
 from scripts.drone.copter import Copter
-import preconditions
 from scripts.drone.copter_error import *
 
 from scripts.drone.message import Messages

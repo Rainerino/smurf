@@ -1,30 +1,16 @@
 from django.conf.urls import url
 
-from copter.views import views
-
+from copter.views.drone_status import DroneStatusListCreate
+from copter.views.command_mode import DroneCommandListCreate
+from copter.views.guided_mode import GuidedWaypointListCreate
+from copter.views.mission_mode import FlightMissionListCreate
 
 urlpatterns = [
-    url('api/mavlink/connect/(?P<pk>[0-9]+)$', views.MavlinkConnectListCreate.as_view(), name='mavlink_connect'),
-    url('api/mavlink/arm/(?P<pk>[0-9]+)$', views.MavlinkArmListCreate.as_view(), name='mavlink_arm'),
-    url('api/mavlink/goto/(?P<pk>[0-9]+)$', views.MavlinkGoToViews.as_view(), name='mavlink goto'),
-    url('api/mavlink/data/(?P<pk>[0-9]+)$', views.MavlinkDataListCreate.as_view(), name='mavlink data'),
-    url('api/mavlink/engine/(?P<pk>[0-9]+)$', views.MavlinkEngineListCreate.as_view(), name='mavlink engine'),
 
-    url('api/mavlink/mission/(?P<pk>[0-9]+)$', views.MavlinkMissionViews.as_view(), name='mavlink mission'),
-    url('api/mavlink/gps/(?P<pk>[0-9]+)$', views.GpsPositionViews.as_view(), name='gps'),
-    url('api/mavlink/aerial_gps/(?P<pk>[0-9]+)$', views.AerialPositionView.as_view(), name='aerial_gps'),
-    url('api/mavlink/waypoint/(?P<pk>[0-9]+)$', views.WaypointView.as_view(), name='waypoint'),
-
+	url('api/copter/command/(?P<pk>[0-9]+)$', DroneCommandListCreate.as_view(), name='command'),
+	url('api/copter/status/(?P<pk>[0-9]+)$', DroneStatusListCreate.as_view(), name='status'),
+	url('api/copter/mission/(?P<pk>[0-9]+)$', FlightMissionListCreate.as_view(), name='mission'),
+	url('api/copter/guided/(?P<pk>[0-9]+)$', GuidedWaypointListCreate.as_view(), name='guided'),
 ]
 
-# from .engine import engine_main
-#
-# from background_task import background
-#
-#
-# @background()
-# def engine_daemon():
-#     engine_main.main()
-#
-#
-# engine_daemon()
+
