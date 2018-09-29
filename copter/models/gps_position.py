@@ -1,7 +1,10 @@
 # coding=utf-8
+import math
+
 from django.db import models
 
-from copter.models.distance_func import gps_coordinate_distance
+
+from geopy.distance import great_circle
 
 
 class GpsPosition(models.Model):
@@ -24,14 +27,31 @@ class GpsPosition(models.Model):
         :param other:
         :return:
         """
-        return gps_coordinate_distance(self.latitude, self.longitude,
+        return  self.gps_coordinate_distance(self.latitude, self.longitude,
                                        other.latitude, other.longitude)
 
     def duplicated(self, other):
         """
-
+        Check if the gps position of the two objects are the same
         :param other:
         :return:
         """
         return (self.latitude == other.latitude and
                 self.longitude == other.longitude)
+
+    @staticmethod
+    def gps_coordinate_distance(lat1, lon1, lat2, lon2):
+        """
+        Calculate the great circle distance between two points
+        on the earth (specified in decimal degrees).
+
+        Reference:
+        https://pypi.org/project/geopy/
+
+        https://www.movable-type.co.uk/scripts/latlong.html
+        """
+        p1 = (lat1, lon1)
+        p2 = (lat2, lon2)
+        return great_circle(p1, p2).m
+
+

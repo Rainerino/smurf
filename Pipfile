@@ -51,3 +51,6 @@ piexif = "*"
 pillow = "*"
 exifread = "*"
 pyserial = "*"
+
+sphinx="*"
+sphinx_rtd_theme="*"

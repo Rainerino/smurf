@@ -1,5 +1,6 @@
 from django.test import TestCase
 from copter.models.drone_status import DroneStatus
+
 class TestDroneStatus(TestCase):
 
 	def test_init(self):
