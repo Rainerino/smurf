@@ -1,7 +1,7 @@
 from django.test import TestCase
+from copter.models.guided_waypoint import GuidedWaypoint
 
-
-class TestGuidedWaypoints(TestCase):
+class TestGuidedWaypoint(TestCase):
 
 	def test_init(self):
 		pass

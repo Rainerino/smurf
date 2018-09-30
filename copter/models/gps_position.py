@@ -23,7 +23,7 @@ class GpsPosition(models.Model):
 
     def distance_to(self, other):
         """
-
+        Return the distance between 2 gps location
         :param other:
         :return:
         """
