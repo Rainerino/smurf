@@ -116,3 +116,5 @@ TIMEOUT = 10
 GOTO_PRECISION = 1
 DATA_LINK_REFRESH_RATE = 0.5
 MISSION_REFRESH_RATE = 0.5
+import sys
+TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'

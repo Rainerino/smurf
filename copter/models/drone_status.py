@@ -6,6 +6,7 @@ from dronekit import Vehicle
 
 
 class DroneStatus(models.Model):
+	# TODO: check interop client!
 	"""
 	These are the states of the copter, read only
 	"""

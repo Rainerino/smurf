@@ -1,4 +1,4 @@
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotFound
 from rest_framework.response import Response
 
 from copter.serializers.drone import DroneCommandSerializer
@@ -18,20 +18,21 @@ class DroneCommandListCreate(generics.RetrieveUpdateAPIView):
 			serializer.save()
 
 		# First save everything
-
 		if serializer.validated_data.get('is_attempt_connect'):
-			print("======================")
 			connection_port = serializer.validated_data.get("connection_port")
 			copter = DroneCommand.objects.get(pk=1)
-			copter.connection_port = connection_port
 			copter.is_attempt_connect = True
 			copter.save()
 
-			copter.connect_to_vehicle()
+			return_code = copter.connect_to_vehicle(connection_port=connection_port)
 
-		if DroneStatus.objects.get(pk=1).is_connected:
-			print("Connected!")
-			return Response(serializer.data, status=202)
+			if return_code is 0:
+				return Response(serializer.data, status=202)
+			elif return_code is 2:
+				return HttpResponseBadRequest("Bad inputs")
+			elif return_code is 1:
+				return HttpResponseForbidden("Cannot attempt connect again after connected")
+			else:
+				return HttpResponseNotFound("Unexpected branch from copter connect_to_vehicle")
 		else:
-			print("Failed")
-			return Response(serializer.data, status=503)
+			return Response(serializer.data, status=501)

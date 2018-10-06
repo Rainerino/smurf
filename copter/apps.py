@@ -7,7 +7,3 @@ from django.apps import AppConfig
 class CopterConfig(AppConfig):
     name = 'copter'
 
-class Settings:
-    ENGINE_DEBUG = 1
-    TIMEOUT = 30
-    HEARTBEAT_TIMEOUT = 10
