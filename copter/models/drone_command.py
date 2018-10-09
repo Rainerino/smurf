@@ -1,4 +1,5 @@
 import sys
+import time
 import traceback
 
 import dronekit
@@ -39,40 +40,42 @@ class DroneCommand(models.Model):
 			if vehicle is already connected, the function will return false with is_attempt_connect off, and not
 				modifying anything
 			precondition:
-			is_attempt_connect is set to True
-			the physical drone that is connected to the port should be ABSOLUTELY READY TO GO
-				checklist include: gps lock, armable,
+				is_attempt_connect is set to True
+				the physical drone that is connected to the port should be ABSOLUTELY READY TO GO
+					checklist include: gps lock, armable,
 
 			postcondition:
-			is_attempt_connect is set to False
-			is_attempt_disconnect is set to False
-			is_attempt_arm is False
-			is_attempt_disarm is False
-			is_connected is True if Result = True else False
-			is_connecting is False
-			is_armed is False
-			is_arming is False
-			The vehicle object is has passed all the checks if is_connected is True
-			all drone status will get wiped iff connected
+				is_attempt_connect is set to False
+				is_attempt_disconnect is set to False
+				is_attempt_arm is False
+				is_attempt_disarm is False
+				is_connected is True if Result = True else False
+				is_connecting is False
+				is_armed is False
+				is_arming is False
+				The vehicle object is has passed all the checks if is_connected is True
+				all drone status will get wiped iff connected
 
 			Args:
-				connectoin port to be consider
+				connection port to be consider
 			Return:
 				0: All good
-				1: Bad input
+				1: Bad input, such as not connected
 				2: Failed connection
 			"""
 
 		# TODO: parallelism!
 		# The reason being is when having multiple posts
 		if DroneStatus.objects.get(pk=1).is_connected:
-			if settings.ENGINE_DEBUG:
+			if settings.COPTER_DEBUG:
 				print("The copter is already connected")
 			self.is_attempt_connect = False
 			self.save()
 			return 1
-		if settings.ENGINE_DEBUG:
+		if settings.COPTER_DEBUG:
 			print("starting to connect vehicle")
+
+		call_command("loaddata", "copter_test")
 
 		self.connection_port = connection_port
 		self.save()
@@ -87,7 +90,7 @@ class DroneCommand(models.Model):
 			connect_object.connection_status_message = Messages.CONNECTING % self.connection_port
 			connect_object.save()
 
-			if settings.ENGINE_DEBUG:
+			if settings.COPTER_DEBUG:
 				print("Connecting to %s " % self.connection_port)
 			# for some reason the connection fails some times
 
@@ -99,7 +102,8 @@ class DroneCommand(models.Model):
 			if not settings.TESTING:
 				connect_object.vehicle = dronekit.connect(self.connection_port, wait_ready=True, heartbeat_timeout=10)
 			else:
-				print("TESTING: connected to dummy copter")
+				# TODO: add a test fail
+				print("===============Testing: connected to dummy copter")
 		except Exception as e:
 			print(traceback.print_tb(e.__traceback__))
 			no_error = False
@@ -121,7 +125,7 @@ class DroneCommand(models.Model):
 
 				self.save()
 
-				if settings.ENGINE_DEBUG:
+				if settings.COPTER_DEBUG:
 					print("Connected to %s " % self.connection_port)
 
 				return 0
@@ -138,26 +142,113 @@ class DroneCommand(models.Model):
 				self.is_attempt_disconnect = False
 				self.save()
 
-				if settings.ENGINE_DEBUG:
+				if settings.COPTER_DEBUG:
 					print("=====================================================================")
 					print("ERROR WAS HANDLED")
 
 				return 2
 
-	@preconditions(lambda self, delay: self.is_attempt_arm and not self.is_attempt_disarm and isinstance(delay, int))
-	def arm_vehicle(self, delay=0):
+	@preconditions(lambda self, delay: self.is_attempt_arm)
+	def arm_vehicle(self, delay=3):
 		""""
 		Arm vehicle function
 
-		precondition: vehicle is connected, and user is attempt arm
+		precondition: vehicle is connected, and user is attempt arm. The is_attempt_disarm signal will be suppressed.
 		postcondition: vehicle is armed
 
 		Args:
-			delay: the duration of the delay to wait before arming
+			delay: the duration of the delay to wait before arming. This will be the minium time the arming will take
 		Return:
-			bool indicate if arming failed or not
+			0: Successfully armed
+			1: Bad inputs, such as not connected and such
+			2: Failed connection or failed arm
 		"""
-		pass
+		no_error = True
+
+		if not DroneStatus.objects.get(pk=1).is_connected:
+			# if not connected, suppress all signal since the copter shouldn't be armed or armable
+			self.is_attempt_arm = False
+			self.is_attempt_disarm = False
+			self.save()
+			status = DroneStatus.objects.get(pk=1)
+			status.is_armed = False
+			status.is_arming = False
+			status.is_armable = False
+			status.save()
+			# TODO: add failed message
+			return 1
+
+		elif DroneStatus.objects.get(pk=1).is_armed:
+			# if it's armed, it must be armable
+			self.is_attempt_arm = False
+			self.is_attempt_disarm = False
+			self.save()
+			status = DroneStatus.objects.get(pk=1)
+			status.is_arming = False
+			status.is_armable = True
+			status.save()
+			# TODO: add failed message
+			return 1
+
+		else:
+			# drone is connected and not armed
+			status = DroneStatus.objects.get(pk=1)
+			status.is_arming = True
+			status.is_armed = False
+			status.is_armable = False
+			status.save()
+
+			time.sleep(delay)
+
+			try:
+				if self.arm_check():
+					# TODO: add success message
+					vehicle = DroneStatus.objects.get(pk=1).get_vehicle()
+					vehicle.mode = dronekit.VehicleMode("GUIDED")
+					vehicle.armed = True
+
+					if not settings.TESTING:
+						count = 0
+						while not vehicle.armed and count < settings.ARM_TIMEOUT:
+							time.sleep(1)
+							if settings.COPTER_DEBUG:
+								print("Waiting for arming")
+							count += 1
+						if not vehicle.armed:
+							no_error = False
+					else:
+						print("===============Testing: copter ARMED!")
+				else:
+					no_error = False
+					if settings.COPTER_DEBUG:
+						print("Failed arm check!")
+			except Exception as e:
+				print(traceback.print_tb(e.__traceback__))
+				no_error = False
+
+			if no_error:
+				if settings.COPTER_DEBUG:
+					print("Copter Armed!")
+				self.is_attempt_arm = False
+				self.is_attempt_disarm = False
+				self.save()
+				status = DroneStatus.objects.get(pk=1)
+				status.is_arming = False
+				status.is_armed = True
+				status.save()
+				return 0
+			else:
+				if settings.COPTER_DEBUG:
+					print("Copter Failed Arming!")
+				self.is_attempt_arm = False
+				self.is_attempt_disarm = False
+				self.save()
+				status = DroneStatus.objects.get(pk=1)
+				status.is_arming = False
+				status.is_armed = False
+				status.save()
+				# TODO: add failed message
+				return 2
 
 	def disarm_vehicle(self):
 		""""Disarm vehicle function
@@ -175,7 +266,58 @@ class DroneCommand(models.Model):
 		"""This function will disconnect from a connected vehicle
 		precondition: connected to a vehicle
 		postcondition:
-
-
 		"""
 		pass
+
+	@staticmethod
+	def arm_check():
+		"""
+		Check if the system is armable. Assume the system is connected!
+		If it's armed, just return True and change nothing. If it's
+		precondition: is_attempt_armed is True.
+		postcondition: a connected vehicle that can be armed at anytime
+		Returns:
+			boolean of if the arm check passed or not."""
+		if DroneStatus.objects.get(pk=1).is_armed:
+			return True
+		if not DroneStatus.objects.get(pk=1).is_connected:
+			return False
+		copter_status = DroneStatus.objects.get(pk=1)
+		copter_status.connection_status_message = Messages.ARM_CHECKING
+		copter_status.is_armable = False
+		copter_status.save()
+		vehicle = DroneStatus.objects.get(pk=1).get_vehicle()
+		no_error = True
+
+		try:
+			if not settings.TESTING:
+				count = 0
+				while not vehicle.is_armable and count < settings.ARM_CHECK_TIMEOUT:
+					# if attempt_to_disconnect
+					if settings.COPTER_DEBUG:
+						print("Passing Arm check")
+					time.sleep(1)
+					count += 1
+				if not vehicle.is_armable:
+					raise CopterArmTimeoutError
+			else:
+				print("===============Testing: Copter is armable")
+				return True
+		except CopterArmTimeoutError as e:
+			traceback.print_tb(e.__traceback__)
+			no_error = False
+		except Exception as e:
+			traceback.print_tb(e.__traceback__)
+			no_error = False
+		finally:
+			if no_error:
+				# set the armable bit
+				status = DroneStatus.objects.get(pk=1)
+				status.is_armable = True
+				status.save()
+				return True
+			else:
+				status = DroneStatus.objects.get(pk=1)
+				status.is_armable = False
+				status.save()
+				return False

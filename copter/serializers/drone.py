@@ -2,6 +2,7 @@ from copter.models.drone_command import DroneCommand
 from copter.models.drone_status import DroneStatus
 from rest_framework import serializers
 
+
 class DroneCommandSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = DroneCommand

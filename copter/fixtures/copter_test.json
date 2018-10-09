@@ -93,6 +93,7 @@
       "is_arming": false,
       "is_connected": false,
       "is_connecting": false,
+      "is_armable" : false,
       "arm_status_message": "Arm Testing",
       "connection_status_message": " Connection Testing",
       "velocity": "unknow",

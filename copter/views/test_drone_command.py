@@ -1,3 +1,4 @@
+from django.http import HttpResponseBadRequest
 from django.test import TestCase
 from django.core.management import call_command
 from django.urls import reverse
@@ -149,7 +150,7 @@ class TestDroneCommandConnect(TestCase):
 		}
 		response = self.client.put(
 			command_url, data=command_input, content_type='application/json')
-		self.assertEqual(403, response.status_code)
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
 
 		# check if any of the command object got overridden
 		self.assertFalse(DroneCommand.objects.get(pk=1).is_attempt_connect)
@@ -176,7 +177,7 @@ class TestDroneCommandConnect(TestCase):
 		}
 		response = self.client.put(
 			command_url, data=command_input, content_type='application/json')
-		self.assertEqual(403, response.status_code)
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
 
 		# check if the status objects are right
 		# TOD: the whole thing should get wiped
@@ -185,3 +186,182 @@ class TestDroneCommandConnect(TestCase):
 
 	#TODO: we need to test failed connection somehow
 
+	def test_connected_arm_success(self):
+		"""
+		Test arming without previous arm check
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = False
+		copter_data.is_connected = True
+		copter_data.is_armed = False
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		# The vehicle should have been: connected, armed and doing bits are off, and is armable
+		self.assertEqual(202, response.status_code)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armable)
+		self.assertFalse(DroneCommand.objects.get(pk=1).is_attempt_arm)
+
+	def test_connected_arm_success_with_armable(self):
+		"""
+		Test arming with previous arm_check()
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = True
+		copter_data.is_connected = True
+		copter_data.is_armed = False
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		self.assertEqual(202, response.status_code)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armable)
+
+	def test_connected_arm_already_armed(self):
+		"""
+		Test when the copter is already armed
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = True
+		copter_data.is_connected = True
+		copter_data.is_armed = True
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armable)
+
+	def test_connected_arm_already_armed_suppress_armable(self):
+		"""
+		Test when the copter is already armed
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = False
+		copter_data.is_connected = True
+		copter_data.is_armed = True
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertTrue(DroneStatus.objects.get(pk=1).is_armable)
+
+	def test_arm_failed_not_connected(self):
+		"""
+		Test arming when not connected
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = False
+		copter_data.is_connected = False
+		copter_data.is_armed = False
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_armable)
+		self.assertFalse(DroneCommand.objects.get(pk=1).is_attempt_arm)
+
+
+	def test_arm_failed_not_connected_suppress_armable(self):
+		"""
+		Test arming when not connected
+		:return:
+		"""
+		copter_data = DroneStatus.objects.get(pk=1)
+		copter_data.is_armable = True
+		copter_data.is_connected = False
+		copter_data.is_armed = False
+		copter_data.save()
+
+		command_input = {
+			'is_attempt_connect': False,
+			'is_attempt_disconnect': False,
+			'is_attempt_arm': True,
+			'is_attempt_disarm': False,
+			'connection_port': "127.0.0.1:14550",
+		}
+		response = self.client.put(
+			command_url, data=command_input, content_type='application/json')
+
+		self.assertEqual(HttpResponseBadRequest.status_code, response.status_code)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connected)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_connecting)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_armed)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_arming)
+		self.assertFalse(DroneStatus.objects.get(pk=1).is_armable)
+		self.assertFalse(DroneCommand.objects.get(pk=1).is_attempt_arm)
+
+	def test_connected_disarm_failed(self):
+		pass
+	def test_connecte_disconnect_success(self):
+		pass
+	def test_connecte_disconnect_failed(self):
+		pass

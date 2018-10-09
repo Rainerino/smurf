@@ -26,3 +26,15 @@ class FlightMission(models.Model):
 
 
     # TODO finish this in the end after finsihn guided mode and actions
+
+    def start_mission(self):
+        pass
+
+    def update_waypoint_list(self):
+        pass
+
+    def pause_mission(self):
+        pass
+
+    def check_mission_status(self):
+        pass
