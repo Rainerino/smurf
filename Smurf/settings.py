@@ -116,3 +116,4 @@ import sys
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
 ARM_CHECK_TIMEOUT = 5
 ARM_TIMEOUT = 10
+HOME_LOCATION_TIMEOUT = 3

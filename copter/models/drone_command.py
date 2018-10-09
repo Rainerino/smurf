@@ -260,6 +260,7 @@ class DroneCommand(models.Model):
 		Return:
 			bool indicate if arming failed or not
 		"""
+		# TODO: finish disarm
 		pass
 
 	def disconnect_from_vehicle(self):
@@ -267,6 +268,7 @@ class DroneCommand(models.Model):
 		precondition: connected to a vehicle
 		postcondition:
 		"""
+		# TODO: finish arm
 		pass
 
 	@staticmethod

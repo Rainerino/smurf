@@ -96,19 +96,12 @@
       "is_armable" : false,
       "arm_status_message": "Arm Testing",
       "connection_status_message": " Connection Testing",
-      "velocity": "unknow",
-      "gps": "where are you",
-      "groundspeed": "slower",
-      "airspeed": "faster",
-      "ekf_ok": "always buged",
-      "battery": "more than enough",
-      "last_heartbeat": "still there?",
-      "heading": "NWSE",
-      "mode": "Not in mood",
-      "armed": "always",
-      "system_status": "OMGGGG!",
+      "last_heartbeat": 0,
+      "heading": 0,
       "home_location": 2,
-      "current_location": 1
+      "current_location": 1,
+      "_heartbeat_lastreceived" : 0,
+      "_heartbeat_timeout" :0
     }
   },
   {
@@ -122,17 +115,8 @@
         2,
         3
       ],
-      "mission_status_message": ""
-    }
-  },
-  {
-    "model": "copter.GuidedWaypoint",
-    "pk": 1,
-    "fields": {
-      "current_guided_waypoint": 3,
-      "guided_status_message": "Guided Testing",
-      "is_guided_running" : false,
-      "is_attempt_guided" : false
+      "mission_status_message": "",
+      "current_guided_waypoint": 3
     }
   }
 ]

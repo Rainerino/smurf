@@ -1,5 +1,7 @@
 from django.db import models
+from preconditions import preconditions
 
+from copter.models.aerial_position import AerialPosition
 from copter.models.waypoint import Waypoint
 
 
@@ -17,6 +19,10 @@ class FlightMission(models.Model):
     """
     is_mission_running = models.BooleanField(default=False)
     is_attempt_mission = models.BooleanField(default=False)
+    is_pause_mission = models.BooleanField(default=False)
+    # aerial point 3 is the default go to point
+    current_guided_waypoint = models.ForeignKey(AerialPosition, on_delete=models.CASCADE,
+                                                related_name="guided_waypoint", default=3)
     waypoint_list = models.ManyToManyField(Waypoint, related_name="waypoint_list")
     mission_status_message = models.TextField(default="No message")
 
@@ -26,6 +32,14 @@ class FlightMission(models.Model):
 
 
     # TODO finish this in the end after finsihn guided mode and actions
+
+    def arrived_at_current_waypoint(self):
+        """check if copter has arrived at the assigned waypoint"""
+        pass
+
+    def guided_go_to_waypoint(self, destination):
+        """go to the point assigned"""
+        pass
 
     def start_mission(self):
         pass

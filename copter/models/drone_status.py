@@ -1,10 +1,12 @@
+import time
 import traceback
 
 from django.db import models
 from copter.models.aerial_position import AerialPosition
 from dronekit import Vehicle
 from django.conf import settings
-
+from copter.models.aerial_position import AerialPosition
+from copter.models.gps_position import GpsPosition
 
 class DroneStatus(models.Model):
 	# TODO: check interop client!
@@ -23,9 +25,9 @@ class DroneStatus(models.Model):
 	"""
 	Read only telemetry data, Should mirrow AUVSI's 
 	"""
-	# this will always be the aerial locaiton pk= 0
-	current_location = models.ForeignKey(AerialPosition, on_delete=models.CASCADE, related_name="current_location")
 	# this will always be the aerial locaiton pk= 1
+	current_location = models.ForeignKey(AerialPosition, on_delete=models.CASCADE, related_name="current_location")
+	# this will always be the aerial locaiton pk= 2
 	home_location = models.ForeignKey(AerialPosition, on_delete=models.CASCADE, related_name="home_location")
 	heading = models.TextField(default="")
 	last_heartbeat = models.FloatField(default=0)
@@ -58,7 +60,24 @@ class DroneStatus(models.Model):
 		return self.__dict__
 
 	def refresh_current_and_home_location(self):
-		pass
+		"""
+
+		:return:
+		"""
+		current_aerial = AerialPosition.objects.get(pk=1)
+		home_aerial = AerialPosition.objects.get(pk=2)
+
+		current_aerial.relative_altitude = self.vehicle.location.global_relative_frame.alt
+		current_aerial.gps_position.longitude = self.vehicle.location.global_relative_frame.lon
+		current_aerial.gps_position.latitude = self.vehicle.location.global_relative_frame.lat
+
+		current_aerial.save()
+
+		home_aerial.relative_altitude = self.vehicle.home_location.alt
+		home_aerial.gps_position.latitude = self.vehicle.home_location.lat
+		home_aerial.gps_position.longitude = self.vehicle.home_location.lon
+
+		home_aerial.save()
 
 	def update_status_from_vehicle(self):
 		"""
@@ -72,13 +91,16 @@ class DroneStatus(models.Model):
 			new_data['_heartbeat_lastreceived'] = self.vehicle._heartbeat_lastreceived
 			new_data['_heartbeat_timeout'] = self.vehicle._heartbeat_timeout
 			self.refresh_status(new_data)
-
+			self.refresh_current_and_home_location()
+			if settings.COPTER_DEBUG:
+				print("All Status Updated!")
 		else:
 			if settings.COPTER_DEBUG:
 				print("Failed updating status: vehicle not connected")
 
 	def refresh_status(self, new_data_dict):
-		"""Refresh all the status data
+		"""
+		Refresh all the status data
 			Precondition: all the inputs are valid in the dictionary. Not all inputs has to be covered, but
 						the naming convention should be the same.
 			Postcondition: the database should be refreshed
@@ -118,11 +140,30 @@ class DroneStatus(models.Model):
 
 	def check_home_location(self):
 		"""
-		Check the home locaiton and see if it's valid
+		This function should have been wrapped in check_connection()!
+		Check the home location and see if it's valid.
+		precondition:
 		Returns:
-			bool of if it's valid o rnot
+			bool of if the home location is valid o not
 		"""
-		pass
+		try:
+			count = 0
+			while not self.vehicle.home_location and count < settings.HOME_LOCATION_TIMEOUT:
+				cmds = self.vehicle.commands
+				cmds.download()
+				cmds.wait_ready(timeout=5)
+				if not self.vehicle.home_location:
+					if settings.ENGINE_DEBUG:
+						print(" Waiting for home location ...")
+				time.sleep(1)
+				count += 1
+
+		except Exception as e:
+			traceback.print_tb(e.__traceback__)
+			raise e
+
+		# We have a home location, so print it!
+
 	def check_connection(self):
 		"""This function will check if the drone is connected to the physical vehicle or not
 			check:
@@ -137,8 +178,14 @@ class DroneStatus(models.Model):
 			bool to indicate if the connection is valid or not
 
 		"""
+
 		still_connected = True
-		if not isinstance(self.vehicle.last_heartbeat, float):
+
+		if not self.is_connected:
+			still_connected = False
+		elif not self.check_home_location():
+			still_connected = False
+		elif not isinstance(self.vehicle.last_heartbeat, float):
 			# vehicle is not initiated
 			"""
 			z = dronekit.Vehicle.last_heartbeat
