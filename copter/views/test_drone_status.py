@@ -12,4 +12,3 @@ class TestDroneStatus(TestCase):
 
 	def test_get_vehicle_fails(self):
 		pass
-

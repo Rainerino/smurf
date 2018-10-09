@@ -146,22 +146,30 @@ class DroneStatus(models.Model):
 		Returns:
 			bool of if the home location is valid o not
 		"""
+		no_error = True
 		try:
 			count = 0
-			while not self.vehicle.home_location and count < settings.HOME_LOCATION_TIMEOUT:
-				cmds = self.vehicle.commands
-				cmds.download()
-				cmds.wait_ready(timeout=5)
+			if not settings.TESTING:
+				while not self.vehicle.home_location and count < settings.HOME_LOCATION_TIMEOUT:
+					cmds = self.vehicle.commands
+					cmds.download()
+					cmds.wait_ready(timeout=5)
+					if not self.vehicle.home_location:
+						if settings.ENGINE_DEBUG:
+							print(" Waiting for home location ...")
+					time.sleep(1)
+					count += 1
 				if not self.vehicle.home_location:
-					if settings.ENGINE_DEBUG:
-						print(" Waiting for home location ...")
-				time.sleep(1)
-				count += 1
+					no_error = False
 
 		except Exception as e:
 			traceback.print_tb(e.__traceback__)
-			raise e
-
+			no_error = True
+		finally:
+			if no_error:
+				return True
+			else:
+				return False
 		# We have a home location, so print it!
 
 	def check_connection(self):

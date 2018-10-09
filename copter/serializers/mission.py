@@ -5,6 +5,7 @@ from copter.models.gps_position import GpsPosition
 from copter.models.waypoint import Waypoint
 from copter.models.flight_mission import FlightMission
 
+
 class AerailPositionSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = AerialPosition
@@ -23,9 +24,9 @@ class GpsPositionSerializer(serializers.ModelSerializer):
 		fields = '__all__'
 
 
-
 class FlightMissionSerializer(serializers.ModelSerializer):
-	guided_waypoint_list = serializers.PrimaryKeyRelatedField(many=True, queryset=Waypoint.objects.all(), required=False)
+	guided_waypoint_list = serializers.PrimaryKeyRelatedField(many=True, queryset=Waypoint.objects.all(),
+	                                                          required=False)
 
 	class Meta:
 		model = FlightMission

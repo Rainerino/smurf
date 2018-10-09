@@ -108,9 +108,7 @@ class FlightMission(models.Model):
         """Function to call when starting the mission
         Triggered by is_attempt_mission. This function will iterate at MISSION_REFRESH_RATE,
         Until all waypoints has been reached and it will return, with is_mission_accomplished toggled to True
-
         is_attempt_mission will suppress all triggers, and reset the mission, use with care!
-
         This will trap the operation into a loop that will only terminate after mission is accomplished
 
         1. finish the mission
@@ -120,8 +118,8 @@ class FlightMission(models.Model):
 
         """
         while not self.is_attempt_mission and self.is_mission_running and not self.is_mission_accomplished:
+            # TODO: Take off and Land!
             # keep running
-            # TODO: change this to while
             mission_status = self.check_mission_status()
             if mission_status == 0:
                 self.operation_get_next_waypoint()
