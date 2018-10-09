@@ -110,13 +110,15 @@
     "fields": {
       "is_mission_running": false,
       "is_attempt_mission": false,
+      "is_mission_accomplished":false,
+      "is_pause_mission" :false,
       "waypoint_list": [
         1,
         2,
         3
       ],
       "mission_status_message": "",
-      "current_guided_waypoint": 3
+      "current_guided_waypoint": 3,
     }
   }
 ]
