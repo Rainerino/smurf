@@ -22,20 +22,27 @@ import traceback
 import time
 import signal
 import sys
+from db_write import access_database
 
 HOME_LOCATION_TIMEOUT = 5
 DEBUG = 1
 FREQ = 0.5
 ATTEMPT_DELAY = 1
+
+
 def update_database(data_dict):
 	"""
-
+	This function is suppose to take a datadict, and iterately load the data to the connected database.
+	The upload should based on the database.ini configuration.
 	Args:
 		data_dict: the data we want to print.
 
 	Returns:
 		updated database or not.
 	"""
+	for data in data_dict:
+		pass
+		# access_database(type='update',app='mavlink', model='mavlinkdata', data_name=data, data=data_dict[data])
 	return True
 
 
@@ -123,7 +130,17 @@ def loop_for_connection(connection_string, baud_rate):
 
 					print(prev_last_heartbeat)
 
-					# update_database()
+					data_dict = {}
+					data_dict['is_connected'] = is_connected
+					data_dict['current_longitude'] = vehicle.location.global_relative_frame.lon
+					data_dict['current_latitude'] = vehicle.location.global_relative_frame.lat
+					data_dict['current_altitude'] = vehicle.location.global_relative_frame.alt
+					data_dict['current_heading'] = vehicle.heading
+
+					if not update_database(data_dict):
+						# If the database cannot be loaded, there is no point to update.
+						is_connected = False
+
 				except Exception:
 					print(traceback.print_exc())
 					is_connected = False
