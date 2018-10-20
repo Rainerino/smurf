@@ -83,7 +83,7 @@ def loop_for_connection(connection_string, baud_rate):
 		# This try catch block will attempt to connect to the vehicle.
 		try:
 			#
-			vehicle = dronekit.connect(connection_string, wait_ready=True, baud=baud_rate, heartbeat_timeout=5)
+			vehicle = dronekit.connect(connection_string, wait_ready=False , baud=baud_rate, heartbeat_timeout=5)
 
 		# try to catch the serial false.
 
@@ -113,13 +113,13 @@ def loop_for_connection(connection_string, baud_rate):
 					prev_last_heartbeat = vehicle.last_heartbeat
 
 					# if the home location is not received, just busy wait.
-					while not vehicle.home_location:
-						cmds = vehicle.commands
-						cmds.download()
-						cmds.wait_ready()
-						time.sleep(1)
-						if DEBUG:
-							print("Waiting for home location")
+					# while not vehicle.home_location:
+					# 	cmds = vehicle.commands
+					# 	cmds.download()
+					# 	cmds.wait_ready()
+					# 	time.sleep(1)
+					# 	if DEBUG:
+					# 		print("Waiting for home location")
 
 					# We have a home location, so print it!
 

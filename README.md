@@ -5,7 +5,6 @@ A python package that will push telemetry Ardupliot based Copter data to the pos
 ## Overview
 #### The function provided are: 
 
-> 
 ```bash 
 python smurf.py --connect --baud
 ```
